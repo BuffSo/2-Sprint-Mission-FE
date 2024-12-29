@@ -11,8 +11,8 @@ function useValidateProductForm(initialData) {
     if (fieldName === 'name') {
       if (!value.trim()) {
         error = '상품명은 필수 항목입니다.';
-      } else if (value.length > 10) {
-        error = '10자 이내로 입력해 주세요.';
+      } else if (value.length > 20) {
+        error = '20자 이내로 입력해 주세요.';
       }
     }
 

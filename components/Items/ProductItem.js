@@ -5,8 +5,11 @@ import styles from './ProductItem.module.css';
 
 export default function ProductItem({ product, type, priority = false }) {
   // 기본 이미지가 아니라면 product.images[0]을 사용
-  const isDefaultImage = !(product.images && product.images[0]?.includes('sprint-fe-project.s3.ap-northeast-2.amazonaws.com'));
+  //const isDefaultImage = !(product.images && product.images[0]?.includes('sprint-fe-project.s3.ap-northeast-2.amazonaws.com'));
+  const isDefaultImage = !(product.images && product.images[0]?.includes('uploads/images'));
   const imageUrl = isDefaultImage ? defaultProductImg : product.images[0];
+
+  //console.log('imageUrl', imageUrl);
 
   const imageSize = type === 'best' ? '(min-width: 1200px) 28.2rem, 34.4rem' : '22.1rem';
 
