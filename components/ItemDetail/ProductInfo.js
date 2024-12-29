@@ -25,6 +25,7 @@ export default function ProductInfo({ productId }) {
   const { data: product, isLoading, isError } = useProduct(productId);
   const { addFavoriteMutation, removeFavoriteMutation } = useProductFavorite(productId);
 
+  console.log(product);
   /*
   useEffect(() => {
     if (isLoading) {
