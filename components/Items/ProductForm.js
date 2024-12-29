@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 export default function ProductForm({ initialData = {}, onSubmit, isEdit = false }) {
   const router = useRouter();
 
-  console.log('initialData', initialData);
+  //console.log('initialData', initialData);
   //  초기 상태 설정
   const { productData, setProductData, errors, handleChange, isFormValid } = useValidateProductForm({
     name: initialData.name || '',
@@ -125,15 +125,10 @@ export default function ProductForm({ initialData = {}, onSubmit, isEdit = false
       formData.append('removedImages', JSON.stringify(removedImages));
     }
       
-    console.log('FormData Entries:');
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
-
-    console.log('콘솔 확인용');
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
+    // console.log('FormData Entries:');
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(`${key}:`, value);
+    // }
      
     const payload = formData;
     console.log('Payload:', payload);

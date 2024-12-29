@@ -32,8 +32,8 @@ export default function ArticleList({ initialArticles }) {
         const articlesWithExtras = data.map((article) => ({
           ...article,
           imageUrl: '/images/articles/img_default_article.png',
-          nickname: generateRandomNickname(),
-          likes: getRandomInt(0, 20000),
+          nickname: article.author.nickname,
+          likes: favoriteCount,
           formattedDate: formatDate(article.createdAt),
         }));
         setArticles(articlesWithExtras);

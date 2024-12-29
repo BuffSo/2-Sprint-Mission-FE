@@ -44,7 +44,7 @@ export default function ArticleInfo({ article }) {
                 className={styles.profileImage}
               />
             </div>
-            <span className={styles.nickname}>{article.author || '익명'}</span>
+            <span className={styles.nickname}>{article.author.nickname || '익명'}</span>
             <span className={styles.date}>{article.formattedDate}</span>
           </div>
         </div>

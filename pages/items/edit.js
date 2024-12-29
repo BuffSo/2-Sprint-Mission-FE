@@ -17,7 +17,7 @@ export default function ProductEditPage() {
       const fetchProduct = async () => {
         try {
           const product = await getProduct(id);
-          console.log('product', product)
+
           setInitialData(product); // 초기 데이터 설정
         } catch (error) {
           console.error(error);
