@@ -18,7 +18,7 @@ export default function ArticleInfo({ articleId }) {
   const { data: article, isLoading: isArticleLoading, isError } = useArticle(articleId);
   const { addFavoriteMutation, removeFavoriteMutation } = useArticleFavorite(articleId);
 
-  console.log(article);
+  //console.log(article);
   // 삭제 핸들러
   const handleDelete = () => {
     setIsModalOpen(true);  // 모달 열기
