@@ -9,11 +9,13 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthProvider';
 import ModalConfirm from '../Common/ModalConfirm';
 import { useProduct, useProductFavorite } from '@/lib/hooks/useProductHooks';
+import { useQueryClient } from '@tanstack/react-query';
 
 //const SPINNER_DELAY = 500;
 
 export default function ProductInfo({ productId }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false); // 삭제 확인 모달 상태
   //const [showSpinner, setShowSpinner] = useState(false); // 스피너 표시 상태
 
@@ -23,6 +25,7 @@ export default function ProductInfo({ productId }) {
   const { data: product, isLoading, isError } = useProduct(productId);
   const { addFavoriteMutation, removeFavoriteMutation } = useProductFavorite(productId);
 
+  console.log(product);
   /*
   useEffect(() => {
     if (isLoading) {
@@ -34,6 +37,13 @@ export default function ProductInfo({ productId }) {
   }, [isLoading]);
   */
 
+  // 디버깅용 코드 개발중일 때만 활성화
+  // useEffect(() => {
+  //   if (process.env.NODE_ENV === 'development') {
+  //     console.log('Initial product:', product);
+  //   }
+  // }, [product]);
+
   const handleDelete = () => {
     setIsModalOpen(true); // 삭제 모달 열기
   };
@@ -41,9 +51,15 @@ export default function ProductInfo({ productId }) {
   const confirmDelete = async () => {
     try {
       await deleteProduct(productId);
+
+      queryClient.invalidateQueries('productList'); // 상품 목록 쿼리 무효화
+      
       router.push('/items'); // 삭제 후 리스트 페이지로 이동
     } catch (error) {
-      alert('제품 삭제에 실패했습니다.');
+      console.error('상품 삭제 실패:', error);
+      // 백엔드에서 받은 메시지가 있는 경우 표시, 없으면 기본 메시지 출력
+      const errorMessage = error.response?.data?.message || '상품 삭제에 실패했습니다.';
+      alert(errorMessage);
     } finally {
       setIsModalOpen(false); // 모달 닫기
     }
@@ -80,11 +96,13 @@ export default function ProductInfo({ productId }) {
   if (isError) return <p>상품 정보를 불러오는 데 오류가 발생했습니다.</p>;
 
   // 제품 이미지: 기본 이미지로 대체
-  const productImage = product.images[0]?.includes('sprint-fe-project.s3.ap-northeast-2.amazonaws.com')
+  //const productImage = product.images[0]?.includes('sprint-fe-project.s3.ap-northeast-2.amazonaws.com')
+  const productImage = product.images[0]?.includes('uploads/images')
     ? product.images[0]
     : '/images/items/img_default_product.png';
 
   return (
+    
     <div className={styles.container}>
       {/* 제품 이미지 */}
       <div className={styles.imageWrapper}>

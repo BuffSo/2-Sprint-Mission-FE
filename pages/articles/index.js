@@ -19,17 +19,18 @@ export async function getServerSideProps(context) {
     const bestArticles = bestArticlesData.map((article) => ({
       ...article,
       imageUrl: '/images/articles/img_default_article.png',
-      nickname: generateRandomNickname(),
-      likes: getRandomInt(0, 20000),
+      nickname: article.author.nickname,
+      likes: article.favoriteCount,
       formattedDate: formatDate(article.createdAt),
     }));
 
     const articlesData = await getArticleList({ page: 1, pageSize: maxArticleCount, orderBy: 'recent' });
+
     const articles = articlesData.map((article) => ({
       ...article,
       imageUrl: '/images/articles/img_default_article.png',
-      nickname: generateRandomNickname(),
-      likes: getRandomInt(0, 20000),
+      nickname: article.author.nickname,
+      likes: article.favoriteCount,
       formattedDate: formatDate(article.createdAt),
     }));
     

@@ -1,3 +1,34 @@
+import { useRouter } from 'next/router';
+import ArticleInfo from '@/components/ArticleDetail/ArticleInfo';
+import BackButton from '@/components/Common/BackButton';
+import ArticleCommentForm from '@/components/ArticleDetail/ArticleCommentForm';
+import ArticleCommentList from '@/components/ArticleDetail/ArticleCommentList';
+import { useArticle } from '@/lib/hooks/useArticleHooks';
+import styles from '@/styles/ArticleDetailPage.module.css';
+
+export default function ArticleDetailPage() {
+  const router = useRouter();
+  const { id } = router.query;
+
+  // 게시글 데이터 불러오기
+  const { data: article, isLoading, isError } = useArticle(id);
+
+  if (!router.isReady) return <p>게시글 정보를 불러오는 중입니다....</p>;
+
+  if (isLoading) return <p>게시글 정보를 불러오는 중입니다....</p>;
+  if (isError || !article) return <p>게시글이 존재하지 않습니다.</p>;
+
+  return (
+    <div className={styles.container}>
+      <ArticleInfo articleId={id} />  {/* 게시글 주요 정보 */}
+      <ArticleCommentForm articleId={id} />  {/* 댓글 작성 및 등록 */}
+      <ArticleCommentList articleId={id} />  {/* 댓글 리스트 */}
+      <BackButton onClick={() => router.push('/articles')} />
+    </div>
+  );
+}
+
+/*
 import { getArticleById } from '@/lib/api/ArticleService';
 import ArticleInfo from '@/components/ArticleDetail/ArticleInfo';
 import BackButton from '@/components/Common/BackButton';
@@ -11,12 +42,13 @@ import ArticleCommentList from '@/components/ArticleDetail/ArticleCommentList';
 export async function getServerSideProps(context) {
   const id = context.query['id'];
   const data = await getArticleById(id);
+
   // 필요한 추가 정보 설정
   const articleWithExtras = {
     ...data,
     imageUrl: '/images/articles/img_default_article.png', // 기본 이미지 경로
-    nickname: generateRandomNickname(), // 랜덤 닉네임 생성
-    likes: getRandomInt(0, 20000), // 랜덤 좋아요 수
+    nickname: data.author.nickname, // 랜덤 닉네임 생성
+    likes: data.favoriteCount, // 랜덤 좋아요 수
     formattedDate: formatDate(data.createdAt) // 포맷된 날짜
   };
 
@@ -34,10 +66,11 @@ export default function ArticleDetailPage({id, articleWithExtras : article }) {
 
   return (
     <div className={styles.container}>
-      <ArticleInfo article={article} />                 {/* 게시글 주요 정보 */}
-      <ArticleCommentForm articleId={id} />                    {/* 댓글 작성 및 등록 */}
-      <ArticleCommentList comments={article.articleComments} />{/* 댓글 리스트 */}
+      <ArticleInfo articleId={id} />                 
+      <ArticleCommentForm articleId={id} />                    
+      <ArticleCommentList articleId={id} />
       <BackButton onClick={() => router.push('/articles')} />
     </div>
   );
 }
+*/

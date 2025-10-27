@@ -4,7 +4,6 @@ import SearchBar from '@/components/Common/SearchBar';
 import Dropdown from '@/components/Common/Dropdown'; // Dropdown 컴포넌트 임포트
 import { useState, useEffect, useCallback } from 'react';
 import { getArticleList } from '@/lib/api/ArticleService';
-import { generateRandomNickname, getRandomInt } from '@/lib/utils';
 import formatDate from '@/lib/formatDate';
 import Link from 'next/link';
 
@@ -32,8 +31,8 @@ export default function ArticleList({ initialArticles }) {
         const articlesWithExtras = data.map((article) => ({
           ...article,
           imageUrl: '/images/articles/img_default_article.png',
-          nickname: generateRandomNickname(),
-          likes: getRandomInt(0, 20000),
+          nickname: article.author.nickname,
+          likes: article.favoriteCount,
           formattedDate: formatDate(article.createdAt),
         }));
         setArticles(articlesWithExtras);
@@ -87,7 +86,7 @@ export default function ArticleList({ initialArticles }) {
           value={sortOrder}
           options={[
             { label: '최신순', value: 'recent' },
-            { label: '생성순', value: 'oldest' },
+            { label: '좋아요 순', value: 'favorite' },,
           ]}
           onChange={handleDropdownChange}
         />
@@ -139,7 +138,7 @@ export default function ArticleList({ initialArticles }) {
                       sizes="2.4rem"
                     />
                   </div>
-                  {article.likes > 9999 ? '9999+' : article.likes}
+                  {article.favoriteCount > 9999 ? '9999+' : article.favoriteCount}
                 </div>
               </div>
               

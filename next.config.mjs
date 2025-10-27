@@ -21,7 +21,8 @@ const nextConfig = {
         port: '',
         pathname: '/**'           // Allows all paths from youtube.com
       },
-    ]
+    ],
+    domains: ['localhost'],  // localhost 추가
   }
 };
 
