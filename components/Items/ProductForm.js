@@ -3,18 +3,19 @@ import Image from 'next/image';
 import styles from './ProductForm.module.css';
 import useValidateProductForm from '@/hooks/useValidateProductForm';
 import { useRouter } from 'next/router';
+import { formatNumberWithCommas, parseNumberFromFormatted } from '@/lib/formatNumber';
 
 export default function ProductForm({ initialData = {}, onSubmit, isEdit = false }) {
   const router = useRouter();
 
   //console.log('initialData', initialData);
-  //  초기 상태 설정
-  const { productData, setProductData, errors, handleChange, isFormValid } = useValidateProductForm({
+  //  초기 상태 설정 (가격에 콤마 포맷 적용)
+  const { productData, setProductData, errors, setErrors, handleChange, isFormValid, validateField } = useValidateProductForm({
     name: initialData.name || '',
     description: initialData.description || '',
-    price: initialData.price || '',
+    price: initialData.price ? formatNumberWithCommas(initialData.price) : '',
     tags: initialData.tags || [],
-    images: initialData.images || [], 
+    images: initialData.images || [],
   });
 
   const [tagInput, setTagInput] = useState('');
@@ -102,7 +103,8 @@ export default function ProductForm({ initialData = {}, onSubmit, isEdit = false
     const formData = new FormData();
     formData.append('name', productData.name || '');
     formData.append('description', productData.description || '');
-    formData.append('price', parseInt(productData.price) || 0);
+    // 가격에서 콤마 제거하고 숫자로 변환
+    formData.append('price', parseNumberFromFormatted(productData.price) || 0);
 
     productData.tags.forEach((tag, index) => {
       formData.append(`tags[${index}]`, tag);
@@ -150,6 +152,27 @@ export default function ProductForm({ initialData = {}, onSubmit, isEdit = false
     }
   };
   
+  // 가격 입력 핸들러 (콤마 자동 삽입)
+  const handlePriceChange = (e) => {
+    const value = e.target.value;
+    // 숫자만 추출하고 콤마 포맷 적용
+    const formattedValue = formatNumberWithCommas(value);
+    const numericValue = parseNumberFromFormatted(formattedValue);
+
+    // productData 업데이트 (콤마가 포함된 형태로 저장)
+    setProductData((prevData) => ({
+      ...prevData,
+      price: formattedValue,
+    }));
+
+    // 유효성 검사 실행
+    const error = validateField('price', numericValue);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      price: error,
+    }));
+  };
+
   const handleTagInputChange = (e) => setTagInput(e.target.value);
 
   // 태그 입력 및 추가
@@ -275,7 +298,7 @@ export default function ProductForm({ initialData = {}, onSubmit, isEdit = false
           className={`${styles.input} ${errors.price ? styles.errorInput : ''}`}
           placeholder="판매 가격을 입력해 주세요"
           value={productData.price}
-          onChange={handleChange}
+          onChange={handlePriceChange}
         />
         {errors.price && <p className={styles.errorMessage}>{errors.price}</p>}
 

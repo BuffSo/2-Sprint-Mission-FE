@@ -23,7 +23,9 @@ function useValidateProductForm(initialData) {
     }
 
     if (fieldName === 'price') {
-      if (!value.trim()) {
+      // 값이 문자열이 아닐 수 있으므로 String으로 변환 후 처리
+      const stringValue = String(value);
+      if (!stringValue || stringValue.trim() === '') {
         error = '필수 항목입니다.';
       } else if (isNaN(Number(value)) || Number(value) <= 0) {
         error = '0보다 큰 숫자로 입력해 주세요.';
@@ -69,8 +71,10 @@ function useValidateProductForm(initialData) {
     productData,
     setProductData,
     errors,
+    setErrors,
     handleChange,
     isFormValid,
+    validateField,
   };
 }
 
