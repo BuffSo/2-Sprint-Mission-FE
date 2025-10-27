@@ -43,19 +43,18 @@ export default function SignupForm() {
       return;
     }
 
-    // API 문서에 맞춘 키 변환
+    // API 문서에 맞춘 키 변환 (passwordConfirmation 제거)
     const formattedSignupData = {
       email: signupData.email,
-      nickname: signupData.nick,               
+      nickname: signupData.nick,
       password: signupData.password,
-      passwordConfirmation: signupData.passwordConfirm, 
     };
 
     try {
       const res = await authApi.signUp(formattedSignupData);
       if(res) {
         //setModalMessage('회원 가입이 성공적으로 처리되었습니다.');
-        //setIsModalOpen(true);   
+        //setIsModalOpen(true);
 
         // 회원가입 성공 시 로그인
         await login({
@@ -65,8 +64,14 @@ export default function SignupForm() {
         router.push('/items');
       }
     } catch (error) {
-      console.warn('회원가입 실패: ', error.message);
-      setModalMessage(error.message);
+      console.warn('회원가입 실패: ', error);
+      // 에러 메시지를 안전하게 문자열로 변환
+      const errorMessage = typeof error === 'string'
+        ? error
+        : error?.response?.data?.message
+        || error?.message
+        || '회원가입에 실패했습니다.';
+      setModalMessage(errorMessage);
       setIsModalOpen(true);
     }
   };
