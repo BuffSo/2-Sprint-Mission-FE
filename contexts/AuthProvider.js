@@ -40,13 +40,25 @@ export function AuthProvider({ children }) {
 
   // 로그인 함수
   async function login(loginData) {
+    // OAuth callback에서 호출된 경우 (토큰이 이미 저장됨)
+    if (loginData?.skipApiCall) {
+      try {
+        await getMe(); // 사용자 정보만 가져오기
+        return null;
+      } catch (error) {
+        console.error('사용자 정보 가져오기 오류:', error);
+        return '사용자 정보를 가져오는데 실패했습니다.';
+      }
+    }
+
+    // 일반 로그인
     const result = await authApi.signIn(loginData);
 
     // signIn에서 반환된 에러 메시지를 확인하고 처리
     if (result.error) {
       console.error('로그인 오류:', result.error);
       return result.error;
-    }   
+    }
 
     try {
       await getMe(); // 로그인 후 사용자 정보 갱신
@@ -56,8 +68,8 @@ export function AuthProvider({ children }) {
       // 서버에서 반환된 에러 메시지 읽기
       const errorMessage = error.response?.data?.message || '로그인 중 알 수 없는 오류가 발생했습니다.';
       console.error('로그인 오류:', errorMessage);
-      // 로그인창에서 에러를 전달 받을 수 있도록 리턴함 
-      return errorMessage;      
+      // 로그인창에서 에러를 전달 받을 수 있도록 리턴함
+      return errorMessage;
     }
   }
 

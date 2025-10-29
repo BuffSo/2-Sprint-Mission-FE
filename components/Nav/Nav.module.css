@@ -86,27 +86,36 @@
 .gnbUserInfo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.8rem;
   font-size: 1.8rem;
   width: 100%;
+  max-width: 15rem;
 }
 
 .userProfileImg {
-  position: relative; 
-
+  position: relative;
   width: 4rem;
   height: 4rem;
-  border-radius: 50%; 
+  min-width: 4rem;
+  min-height: 4rem;
+  border-radius: 50%;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .profileImage {
   object-fit: cover;
+  border-radius: 50%;
 }
 
 .userName {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   color: #4b5563;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 10rem;
+  flex-shrink: 0;
 }
 
 /* Tablet 사이즈 */

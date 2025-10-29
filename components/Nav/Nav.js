@@ -74,15 +74,18 @@ export default function Nav() {
           ) : (
             <div className={styles.gnbUserInfo} onClick={handleLogout} style={{ cursor: 'pointer' }}>
               <div className={styles.userProfileImg}>
-                <Image 
-                  src={UserProfileImg} 
+                <Image
+                  src={user.image || UserProfileImg}
                   alt="User"
-                  fill 
+                  fill
                   sizes="4rem"
-                  className={styles.profileImg} 
+                  className={styles.profileImage}
+                  style={{ objectFit: 'cover' }}
                 />
               </div>
-              <span className={styles.userName} style={{ cursor: 'pointer' }}>{user ? user.nickname : '익명'}</span>
+              <span className={styles.userName} style={{ cursor: 'pointer' }}>
+                {user?.nickname || user?.email?.split('@')[0] || '익명'}
+              </span>
             </div>
           )}
         </div>

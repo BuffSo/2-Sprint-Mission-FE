@@ -11,7 +11,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'example.com', 
+        hostname: 'example.com',
         port: '',
         pathname: '/**' // Adjust the path if you need to limit it further
       },
@@ -20,6 +20,12 @@ const nextConfig = {
         hostname: 'youtube.com',  // Allows images from youtube.com
         port: '',
         pathname: '/**'           // Allows all paths from youtube.com
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',  // Google profile images
+        port: '',
+        pathname: '/**'
       },
     ],
     domains: ['localhost'],  // localhost 추가
