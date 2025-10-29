@@ -13,10 +13,13 @@ export default function OAuthCallback() {
 
       const { accessToken, refreshToken, error } = router.query;
 
+      // 디버깅: URL 파라미터 확인
+      alert(`URL 파라미터 확인:\naccessToken: ${accessToken ? 'O' : 'X'}\nrefreshToken: ${refreshToken ? 'O' : 'X'}\nerror: ${error || 'X'}`);
+
       // OAuth 에러가 있는 경우
       if (error) {
         console.error('OAuth error:', error);
-        alert('Google 로그인에 실패했습니다. 다시 시도해주세요.');
+        alert(`Google 로그인 에러: ${error}`);
         router.replace('/signin');
         return;
       }
