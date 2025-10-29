@@ -13,13 +13,9 @@ export default function OAuthCallback() {
 
       const { accessToken, refreshToken, error } = router.query;
 
-      // 디버깅: URL 파라미터 확인
-      alert(`URL 파라미터 확인:\naccessToken: ${accessToken ? 'O' : 'X'}\nrefreshToken: ${refreshToken ? 'O' : 'X'}\nerror: ${error || 'X'}`);
-
       // OAuth 에러가 있는 경우
       if (error) {
         console.error('OAuth error:', error);
-        alert(`Google 로그인 에러: ${error}`);
         router.replace('/signin');
         return;
       }
@@ -43,8 +39,6 @@ export default function OAuthCallback() {
           if (result) {
             // 에러가 발생한 경우
             console.error('Login error:', result);
-            const errorMessage = typeof result === 'object' ? JSON.stringify(result) : result;
-            alert(`/users/me API 호출 실패:\n${errorMessage}\n\n토큰은 정상 수신됨`);
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             router.replace('/signin');
@@ -53,12 +47,9 @@ export default function OAuthCallback() {
 
           // 성공: 메인 페이지로 리다이렉트
           console.log('로그인 성공!');
-          alert('로그인 성공! 메인 페이지로 이동합니다.');
           router.replace('/');
         } catch (error) {
           console.error('Token storage error:', error);
-          const errorDetails = error?.response?.data || error?.message || error;
-          alert(`예외 발생:\n${JSON.stringify(errorDetails, null, 2)}\n\n에러 타입: ${error?.name}`);
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           router.replace('/signin');
