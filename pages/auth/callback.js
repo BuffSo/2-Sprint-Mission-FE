@@ -8,6 +8,9 @@ export default function OAuthCallback() {
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
+      console.log('=== OAuth Callback 시작 ===');
+      console.log('router.query:', router.query);
+
       const { accessToken, refreshToken, error } = router.query;
 
       // OAuth 에러가 있는 경우
@@ -17,6 +20,10 @@ export default function OAuthCallback() {
         router.replace('/signin');
         return;
       }
+
+      // 토큰 확인
+      console.log('accessToken 존재:', !!accessToken);
+      console.log('refreshToken 존재:', !!refreshToken);
 
       // 토큰이 있는 경우
       if (accessToken && refreshToken) {
@@ -48,6 +55,12 @@ export default function OAuthCallback() {
           alert('로그인 처리 중 오류가 발생했습니다.');
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
+          router.replace('/signin');
+        }
+      } else {
+        console.log('토큰이 없습니다. router.query:', router.query);
+        if (router.isReady) {
+          console.log('router는 준비되었지만 토큰이 없어 /signin으로 리다이렉트');
           router.replace('/signin');
         }
       }
