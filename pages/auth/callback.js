@@ -43,7 +43,8 @@ export default function OAuthCallback() {
           if (result) {
             // 에러가 발생한 경우
             console.error('Login error:', result);
-            alert(`로그인 처리 중 오류: ${result}`);
+            const errorMessage = typeof result === 'object' ? JSON.stringify(result) : result;
+            alert(`/users/me API 호출 실패:\n${errorMessage}\n\n토큰은 정상 수신됨`);
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             router.replace('/signin');
@@ -52,10 +53,12 @@ export default function OAuthCallback() {
 
           // 성공: 메인 페이지로 리다이렉트
           console.log('로그인 성공!');
+          alert('로그인 성공! 메인 페이지로 이동합니다.');
           router.replace('/');
         } catch (error) {
           console.error('Token storage error:', error);
-          alert('로그인 처리 중 오류가 발생했습니다.');
+          const errorDetails = error?.response?.data || error?.message || error;
+          alert(`예외 발생:\n${JSON.stringify(errorDetails, null, 2)}\n\n에러 타입: ${error?.name}`);
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           router.replace('/signin');
