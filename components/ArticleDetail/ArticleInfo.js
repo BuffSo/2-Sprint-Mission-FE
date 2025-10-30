@@ -8,15 +8,19 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import ModalConfirm from '../Common/ModalConfirm';
 
-export default function ArticleInfo({ articleId }) {
+export default function ArticleInfo({ articleId, article: initialArticle }) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);  // 로딩 상태 추가
 
   // React Query 훅 - 게시글 정보 조회
-  const { data: article, isLoading: isArticleLoading, isError } = useArticle(articleId);
+  // initialArticle이 있으면 initialData로 사용하고 API 호출하지 않음
+  const { data: article } = useArticle(articleId, false);
   const { addFavoriteMutation, removeFavoriteMutation } = useArticleFavorite(articleId);
+
+  // props로 받은 article 사용
+  const articleData = article || initialArticle;
 
   //console.log(article);
   // 삭제 핸들러
@@ -53,13 +57,13 @@ export default function ArticleInfo({ articleId }) {
     if (isLoading) return;
     setIsLoading(true);
 
-    const previousFavoriteState = article.isFavorite;
-    const previousLikes = article.likes;
+    const previousFavoriteState = articleData.isFavorite;
+    const previousLikes = articleData.favoriteCount;
 
     queryClient.setQueryData(['article', articleId], (oldData) => ({
       ...oldData,
       isFavorite: !previousFavoriteState,
-      likes: previousFavoriteState ? previousLikes - 1 : previousLikes + 1,
+      favoriteCount: previousFavoriteState ? previousLikes - 1 : previousLikes + 1,
     }));
 
     try {
@@ -76,21 +80,18 @@ export default function ArticleInfo({ articleId }) {
       queryClient.setQueryData(['article', articleId], (oldData) => ({
         ...oldData,
         isFavorite: previousFavoriteState,
-        likes: previousLikes,
+        favoriteCount: previousLikes,
       }));
     } finally {
       setIsLoading(false);
     }
   };
 
-  // 로딩 중일 때 스켈레톤 렌더링
-  //if (isArticleLoading) return <ArticleDetailSkeleton />;
-  if (isArticleLoading) return <p>게시글 정보를 불러오는 중입니다...</p>;
-  if (isError) return <p>게시글 정보를 불러오는 데 실패했습니다.</p>;
+  if (!articleData) return <p>게시글 정보를 불러오는 중입니다...</p>;
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>{article.title}</h1>
+      <h1 className={styles.title}>{articleData.title}</h1>
 
       <div className={styles.articleInfo}>
         <div className={styles.writerInfo}>
@@ -106,9 +107,9 @@ export default function ArticleInfo({ articleId }) {
             </div>
             <div className={styles.writerDetails}>
               <span className={styles.nickname}>
-                {article.ownerNickname || '익명'}
+                {articleData.ownerNickname || '익명'}
               </span>
-              <span className={styles.date}>{new Date(article.createdAt).toLocaleDateString()}</span>
+              <span className={styles.date}>{new Date(articleData.createdAt).toLocaleDateString()}</span>
             </div>
           </div>
         </div>
@@ -120,7 +121,7 @@ export default function ArticleInfo({ articleId }) {
             onClick={handleFavoriteToggle}
           >
             <Image
-              src={article.isFavorite ? '/images/ic_heart_active.svg' : '/images/articles/ic_heart.svg'}
+              src={articleData.isFavorite ? '/images/ic_heart_active.svg' : '/images/articles/ic_heart.svg'}
               alt="좋아요 아이콘"
               fill
               sizes="3.2rem"
@@ -128,7 +129,7 @@ export default function ArticleInfo({ articleId }) {
             />
           </div>
           <span className={styles.likesCount}>
-            {article.favoriteCount > 9999 ? '9999+' : article.favoriteCount}
+            {articleData.favoriteCount > 9999 ? '9999+' : articleData.favoriteCount}
           </span>
         </div>
 
@@ -147,7 +148,7 @@ export default function ArticleInfo({ articleId }) {
         </div>
       </div>
 
-      <div className={styles.content}>{article.content}</div>
+      <div className={styles.content}>{articleData.content}</div>
 
       {/* 삭제 확인 모달 */}
       <ModalConfirm
