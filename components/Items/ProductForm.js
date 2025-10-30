@@ -308,13 +308,13 @@ export default function ProductForm({ initialData = {}, onSubmit, isEdit = false
           type="text"
           name="tags"
           className={`${styles.input} ${errors.tags ? styles.errorInput : ''}`}
-          placeholder="태그를 입력해 주세요"
+          placeholder="태그 입력 후 Enter를 누르면 추가됩니다 (최대 5자)"
           value={tagInput}
           onChange={handleTagInputChange}
           onKeyDown={handleTagInputKeyDown}
         />
         {errors.tags && <p className={styles.errorMessage}>{errors.tags}</p>}
-        
+
         <div className={styles.tags}>
           {productData.tags.map((tag, index) => (
             <div key={index} className={styles.tag}>

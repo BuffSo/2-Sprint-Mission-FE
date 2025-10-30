@@ -206,3 +206,10 @@
   align-items: center;
   justify-content: center;
 }
+.helperText {
+  color: #9CA3AF;
+  font-size: 1.4rem;
+  line-height: 2.4rem;
+  margin-top: 0.8rem;
+  margin-left: 1.6rem;
+}
