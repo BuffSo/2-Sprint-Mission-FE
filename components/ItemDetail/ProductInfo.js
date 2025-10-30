@@ -13,19 +13,21 @@ import { useQueryClient } from '@tanstack/react-query';
 
 //const SPINNER_DELAY = 500;
 
-export default function ProductInfo({ productId }) {
+export default function ProductInfo({ productId, product: initialProduct }) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false); // 삭제 확인 모달 상태
   //const [showSpinner, setShowSpinner] = useState(false); // 스피너 표시 상태
 
-  useAuth(true); // 인가된 사용자만 접근 허용
-
   // React Query 훅 사용 - 상품 정보, 로딩, 에러 상태 관리
-  const { data: product, isLoading, isError } = useProduct(productId);
+  // initialProduct가 있으면 API 호출하지 않음
+  const { data: product } = useProduct(productId, false);
   const { addFavoriteMutation, removeFavoriteMutation } = useProductFavorite(productId);
 
-  console.log(product);
+  // props로 받은 product 사용
+  const productData = product || initialProduct;
+
+  console.log(productData);
   /*
   useEffect(() => {
     if (isLoading) {
@@ -78,7 +80,7 @@ export default function ProductInfo({ productId }) {
   // 좋아요 상태 변경 핸들러
   const handleFavoriteToggle = async () => {
     try {
-      if (product.isFavorite) {
+      if (productData.isFavorite) {
         await removeFavoriteMutation.mutateAsync();
       } else {
         await addFavoriteMutation.mutateAsync();
@@ -88,17 +90,12 @@ export default function ProductInfo({ productId }) {
     }
   };
 
-  // 로딩 중일 때 스켈레톤 -> 일정 시간이 지나면 스피너로 전환
-  //if (isLoading) return showSpinner ? <Spinner /> : <ProductDetailSkeleton />;
-  if (isLoading) return <ProductDetailSkeleton />;
-
-  // 에러 상태일 때 메시지 표시
-  if (isError) return <p>상품 정보를 불러오는 데 오류가 발생했습니다.</p>;
+  if (!productData) return <p>상품 정보를 불러오는 중입니다...</p>;
 
   // 제품 이미지: 기본 이미지로 대체
-  //const productImage = product.images[0]?.includes('sprint-fe-project.s3.ap-northeast-2.amazonaws.com')
-  const productImage = product.images[0]?.includes('uploads/images')
-    ? product.images[0]
+  //const productImage = productData.images[0]?.includes('sprint-fe-project.s3.ap-northeast-2.amazonaws.com')
+  const productImage = productData.images[0]?.includes('uploads/images')
+    ? productData.images[0]
     : '/images/items/img_default_product.png';
 
   return (
@@ -119,14 +116,14 @@ export default function ProductInfo({ productId }) {
 
       {/* 제품 상세 정보 */}
       <div className={styles.productDetails}>
-        <h1 className={styles.title}>{product.name}</h1> {/* 상품명 */}
-        <p className={styles.price}>{product.price.toLocaleString()}원</p> {/* 가격 */}
+        <h1 className={styles.title}>{productData.name}</h1> {/* 상품명 */}
+        <p className={styles.price}>{productData.price.toLocaleString()}원</p> {/* 가격 */}
         <h2 className={styles.sectionTitle}>상품 소개</h2>
-        <p className={styles.description}>{product.description}</p> {/* 상품 설명 */}
+        <p className={styles.description}>{productData.description}</p> {/* 상품 설명 */}
 
         <h2 className={styles.sectionTitle}>상품 태그</h2>
         <div className={styles.tags}>
-          {product.tags.map((tag, index) => (
+          {productData.tags.map((tag, index) => (
             <span key={index} className={styles.tag}>#{tag}</span> // 상품 태그 목록
           ))}
         </div>
@@ -144,8 +141,8 @@ export default function ProductInfo({ productId }) {
               />
             </div>
             <div className={styles.writerDetails}>
-              <span className={styles.nickname}>{product.ownerNickname || '익명'}</span>
-              <span className={styles.date}>{new Date(product.createdAt).toLocaleDateString()}</span>
+              <span className={styles.nickname}>{productData.ownerNickname || '익명'}</span>
+              <span className={styles.date}>{new Date(productData.createdAt).toLocaleDateString()}</span>
             </div>
           </div>
 
@@ -153,13 +150,13 @@ export default function ProductInfo({ productId }) {
           <div className={styles.likesWrapper}>
             <div className={styles.likesIconWrapper} onClick={handleFavoriteToggle}>
               <Image
-                src={product.isFavorite ? '/images/ic_heart_active.svg' : '/images/ic_heart.svg'}
+                src={productData.isFavorite ? '/images/ic_heart_active.svg' : '/images/ic_heart.svg'}
                 alt="좋아요 아이콘"
                 fill
                 sizes="3.2rem"
               />
             </div>
-            <span className={styles.likesCount}>{product.favoriteCount > 9999 ? '9999+' : product.favoriteCount}</span>
+            <span className={styles.likesCount}>{productData.favoriteCount > 9999 ? '9999+' : productData.favoriteCount}</span>
           </div>
 
           {/* 드롭다운 메뉴 */}
