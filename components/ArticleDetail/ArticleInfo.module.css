@@ -96,6 +96,9 @@
   margin-bottom: 3.2rem;
 
   border-top: 1px solid #E5E7EB;
+
+  white-space: pre-wrap; /* 줄바꿈과 공백 유지 */
+  word-break: break-word; /* 긴 단어 줄바꿈 */
 }
 
 /* 드롭다운 버튼과 메뉴 스타일 */

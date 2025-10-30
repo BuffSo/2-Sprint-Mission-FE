@@ -7,10 +7,12 @@ import { useArticle, useArticleFavorite } from '@/lib/hooks/useArticleHooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import ModalConfirm from '../Common/ModalConfirm';
+import { useAuth } from '@/contexts/AuthProvider';
 
 export default function ArticleInfo({ articleId, article: initialArticle }) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);  // 로딩 상태 추가
 
@@ -21,6 +23,9 @@ export default function ArticleInfo({ articleId, article: initialArticle }) {
 
   // props로 받은 article 사용
   const articleData = article || initialArticle;
+
+  // 본인의 글인지 확인
+  const isOwner = user && articleData && user.id === articleData.ownerId;
 
   //console.log(article);
   // 삭제 핸들러
@@ -144,6 +149,7 @@ export default function ArticleInfo({ articleId, article: initialArticle }) {
             value=""
             onChange={handleDropdownChange}
             className={styles.dropdownToggle}
+            disabledOptions={!isOwner ? ['edit', 'delete'] : []}
           />
         </div>
       </div>

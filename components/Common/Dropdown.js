@@ -9,6 +9,8 @@ export default function Dropdown({
   options,
   onChange,
   iconMode = false,
+  disabled = false,
+  disabledOptions = [],
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef(null);
@@ -46,15 +48,19 @@ export default function Dropdown({
       )}
       {isOpen && (
         <div className={`${styles.options} ${iconMode ? styles.iconModeOptions : ''}`}>
-          {options.map((option) => (
-            <div
-              key={option.value}
-              className={`${styles.option} ${value === option.value ? styles.selected : ''}`}
-              onClick={() => onChange(name, option.value)}
-            >
-              {option.label}
-            </div>
-          ))}
+          {options.map((option) => {
+            const isDisabled = disabledOptions.includes(option.value);
+            return (
+              <div
+                key={option.value}
+                className={`${styles.option} ${value === option.value ? styles.selected : ''} ${isDisabled ? styles.disabledOption : ''}`}
+                onClick={() => !isDisabled && onChange(name, option.value)}
+                style={isDisabled ? { cursor: 'not-allowed', opacity: 0.5, color: '#9CA3AF' } : {}}
+              >
+                {option.label}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
