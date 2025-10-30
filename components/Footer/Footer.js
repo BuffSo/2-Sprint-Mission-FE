@@ -10,7 +10,7 @@ export default function Footer() {
   return (
     <footer className={styles.footerWrapper}>
       <div className={styles.footerContents}>
-        <div className={styles.copyright}>©codeit - 2024</div>
+        <div className={styles.copyright}>©codeit - 2025</div>
         <div className={styles.privacyFaq}>
           <ul className={styles.footerPrivacyFaq}>
             <li>
