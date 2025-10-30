@@ -7,6 +7,10 @@ export default function SocialLogin() {
     authApi.googleLogin();
   };
 
+  const handleKakaoLogin = () => {
+    authApi.kakaoLogin();
+  };
+
   return (
     <div className={styles.socialLogin}>
       <p>간편 로그인하기</p>
@@ -24,15 +28,19 @@ export default function SocialLogin() {
             sizes="2.4rem"
           />
         </button>
-        <div className={styles.iconWrapper} style={{ opacity: 0.5, cursor: 'not-allowed' }}>
+        <button
+          onClick={handleKakaoLogin}
+          className={styles.iconWrapper}
+          style={{ border: 'none', background: 'none', padding: 0, cursor: 'pointer' }}
+        >
           <Image
             src="/images/auth/ic_kakaotalk.png"
-            alt="Kakaotalk 로그인 (준비중)"
+            alt="Kakao 로그인"
             fill
             style={{ objectFit: 'contain' }}
             sizes="2.4rem"
           />
-        </div>
+        </button>
       </div>
     </div>
   );
