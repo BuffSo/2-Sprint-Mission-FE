@@ -24,6 +24,7 @@ export default function ProductList() {
     isError,
     isFetching,
     isPreviousData,
+    refetch,
   } = useProductList(currentPage, maxItems, sortOrder, searchKeyword);
 
   const products = data?.list || [];
@@ -78,7 +79,20 @@ export default function ProductList() {
         {isLoading ? (
           <div className={styles['loading-message']}>상품을 불러오는 중입니다...</div>
         ) : isError ? (
-          <div className={styles['error-message']}>제품을 불러오는 데 문제가 발생했습니다.</div>
+          <div className={styles['error-container']}>
+            <div className={styles['error-icon']}>⚠️</div>
+            <h3 className={styles['error-title']}>제품을 불러오는 데 문제가 발생했습니다</h3>
+            <p className={styles['error-description']}>
+              서버와의 연결에 문제가 있습니다.<br />
+              잠시 후 다시 시도해 주세요.
+            </p>
+            <button
+              className={styles['retry-button']}
+              onClick={() => refetch()}
+            >
+              다시 시도
+            </button>
+          </div>
         ) : (
           products.map((product, index) => (
             <Link key={product.id} href={`/items/${product.id}`}>
