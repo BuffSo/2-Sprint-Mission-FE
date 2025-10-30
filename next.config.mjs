@@ -27,6 +27,12 @@ const nextConfig = {
         port: '',
         pathname: '/**'
       },
+      {
+        protocol: 'https',
+        hostname: 'buffso-pandamarket-api.onrender.com',  // Render backend
+        port: '',
+        pathname: '/**'
+      },
     ],
     domains: ['localhost'],  // localhost 추가
   }
