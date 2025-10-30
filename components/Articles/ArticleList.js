@@ -1,92 +1,109 @@
 import styles from './ArticleList.module.css';
 import Image from 'next/image';
 import SearchBar from '@/components/Common/SearchBar';
-import Dropdown from '@/components/Common/Dropdown'; // Dropdown 컴포넌트 임포트
-import { useState, useEffect, useCallback } from 'react';
+import Dropdown from '@/components/Common/Dropdown';
+import { useState, useEffect, useRef } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { getArticleList } from '@/lib/api/ArticleService';
 import formatDate from '@/lib/formatDate';
 import Link from 'next/link';
 
 const ARTICLE_COUNT = 5;
-const MIN_LOADING_TIME = 500;
 
 export default function ArticleList({ initialArticles }) {
-  const [articles, setArticles] = useState(initialArticles || []);
-  const [filteredArticles, setFilteredArticles] = useState(initialArticles || []);
-  const [loading, setLoading] = useState(false);
-  const [showLoading, setShowLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [sortOrder, setSortOrder] = useState('recent'); // Dropdown의 선택 값 상태 추가
-  const [hasFetchedInitialData, setHasFetchedInitialData] = useState(false);
+  const [sortOrder, setSortOrder] = useState('recent');
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const observerTarget = useRef(null);
 
-  const fetchArticlesData = useCallback(async () => {
-    // 이미 초기 데이터를 로드했으면 fetch 생략
-    if (hasFetchedInitialData || sortOrder !== 'recent') {
-      setLoading(true);
-      setShowLoading(false);
-      const loadingTimeout = setTimeout(() => setShowLoading(true), MIN_LOADING_TIME);
-
-      try {
-        const data = await getArticleList({ page: 1, pageSize: ARTICLE_COUNT, orderBy: sortOrder });
-        const articlesWithExtras = data.map((article) => ({
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    error,
+  } = useInfiniteQuery({
+    queryKey: ['articles', sortOrder],
+    queryFn: async ({ pageParam = 1 }) => {
+      const data = await getArticleList({
+        page: pageParam,
+        pageSize: ARTICLE_COUNT,
+        orderBy: sortOrder
+      });
+      return {
+        articles: data.map((article) => ({
           ...article,
           imageUrl: '/images/articles/img_default_article.png',
           nickname: article.author.nickname,
           likes: article.favoriteCount,
           formattedDate: formatDate(article.createdAt),
-        }));
-        setArticles(articlesWithExtras);
-        setFilteredArticles(articlesWithExtras);
-      } catch (error) {
-        console.error('게시글을 가져오는데 실패했습니다:', error);
-        setError('게시글을 불러오는 데 문제가 발생했습니다.');
-      } finally {
-        clearTimeout(loadingTimeout);
-        setLoading(false);
-        setLoading(false);
-        setHasFetchedInitialData(true); // 초기 데이터를 로드했음을 설정
-      }
-    }
-  }, [sortOrder, hasFetchedInitialData]);
+        })),
+        nextPage: data.length === ARTICLE_COUNT ? pageParam + 1 : undefined,
+      };
+    },
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    initialPageParam: 1,
+    staleTime: 5 * 60 * 1000, // 5분
+  });
 
-  useEffect(()=> {
-    fetchArticlesData();
-  }, [fetchArticlesData]);
-  
-  const handleSearch = (keyword) => {
-    if (!keyword) {
-      setFilteredArticles(articles); // 검색어가 없으면 전체 게시글로 리셋
-    } else {
-      const filtered = articles.filter((article) =>
-        article.title.toLowerCase().includes(keyword.toLowerCase())
-      );
-      setFilteredArticles(filtered);
+  // 무한 스크롤 옵저버
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
     }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const allArticles = data?.pages.flatMap((page) => page.articles) || [];
+
+  const filteredArticles = searchKeyword
+    ? allArticles.filter((article) =>
+        article.title.toLowerCase().includes(searchKeyword.toLowerCase())
+      )
+    : allArticles;
+
+  const handleSearch = (keyword) => {
+    setSearchKeyword(keyword);
   };
 
   const handleDropdownChange = (name, value) => {
-    setSortOrder(value); // Dropdown에서 선택한 값을 상태로 설정
+    setSortOrder(value);
   };
 
-  if (showLoading) {
+  if (isLoading) {
     return <div className='content-spacer'><p>로딩 중...</p></div>;
   }
 
   if (error) {
-    return <p className={styles.error}>{error}</p>;
+    return <p className={styles.error}>게시글을 불러오는 데 문제가 발생했습니다.</p>;
   }
 
   return (
     <div className={`${styles.articleContainer} ${filteredArticles.length === 0 ? styles.noArticles : ''}`}>
-      <div className={styles.controls}> {/* SearchBar와 Dropdown을 감싸는 div */}
+      <div className={styles.controls}>
         <SearchBar initialValue="" onSearch={handleSearch} />
         <Dropdown
-          className={styles.dropdown}        
+          className={styles.dropdown}
           name="sortOrder"
           value={sortOrder}
           options={[
             { label: '최신순', value: 'recent' },
-            { label: '좋아요 순', value: 'favorite' },,
+            { label: '좋아요 순', value: 'favorite' },
           ]}
           onChange={handleDropdownChange}
         />
@@ -96,7 +113,6 @@ export default function ArticleList({ initialArticles }) {
         {filteredArticles.map((article) => (
           <li key={article.id} className={styles.articleItem}>
             <div className={styles.articleWrapper}>
-
               <div className={styles.articleTop}>
                 <Link href={`/articles/${article.id}`} passHref>
                   <h3 className={styles.articleTitle}>{article.title}</h3>
@@ -141,11 +157,19 @@ export default function ArticleList({ initialArticles }) {
                   {article.favoriteCount > 9999 ? '9999+' : article.favoriteCount}
                 </div>
               </div>
-              
             </div>
           </li>
         ))}
       </ul>
+
+      {/* 무한 스크롤 트리거 */}
+      <div ref={observerTarget} className={styles.loadMoreTrigger}>
+        {isFetchingNextPage && <p>더 불러오는 중...</p>}
+      </div>
+
+      {!hasNextPage && filteredArticles.length > 0 && (
+        <p className={styles.endMessage}>모든 게시글을 불러왔습니다.</p>
+      )}
     </div>
   );
 }
