@@ -15,7 +15,7 @@ export async function getServerSideProps(context) {
 
   const maxArticleCount = 5;
   try {
-    const bestArticlesData = await getArticleList({ page: 1, pageSize: initialBestArticleCount, orderBy: 'recent' });
+    const bestArticlesData = await getArticleList({ page: 1, pageSize: initialBestArticleCount, orderBy: 'favorite' });
     const bestArticles = bestArticlesData.map((article) => ({
       ...article,
       imageUrl: '/images/articles/img_default_article.png',

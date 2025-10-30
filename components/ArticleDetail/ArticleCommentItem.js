@@ -41,7 +41,7 @@ export default function ArticleCommentItem({ comment, onDelete, onEdit }) {
           />
         </div>
         <div className={styles.nicknameAndDate}>
-          <span className={styles.nickname}>{comment.nickname || '익명'}</span>
+          <span className={styles.nickname}>{comment.writer?.nickname || '익명'}</span>
           <span className={styles.date}>{formatTimeAgo(comment.createdAt)}</span>
         </div>
         {/* 드롭다운 메뉴 */}
