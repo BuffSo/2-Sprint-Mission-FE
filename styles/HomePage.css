@@ -178,11 +178,12 @@
   width: 29.5rem;
 }
 .banner-bottom-img {
+  position: relative;
   display: flex;
   align-items:flex-end;
   z-index: 0;
-  width: 99.6rem;              
-  height: 54rem;        
+  width: 99.6rem;
+  height: 44.7rem;
 }
 .banner-bottom-img img{
   width: 100%;
