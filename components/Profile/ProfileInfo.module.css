@@ -1,0 +1,185 @@
+.card {
+  background: white;
+  border: 0.1rem solid #e5e7eb;
+  border-radius: 1.6rem;
+  padding: 3.2rem;
+}
+
+.cardHeader {
+  margin-bottom: 3.2rem;
+}
+
+.cardTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.8rem;
+}
+
+.cardDescription {
+  font-size: 1.4rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+/* 프로필 이미지 */
+.imageSection {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.6rem;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.imageWrapper:hover {
+  opacity: 0.8;
+}
+
+.imageWrapper:hover .imageOverlay {
+  opacity: 1;
+}
+
+.profileImage {
+  object-fit: cover;
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.imageOverlay svg {
+  color: white;
+}
+
+.fileInput {
+  display: none;
+}
+
+/* 폼 그룹 */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.label {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.input {
+  padding: 1.4rem 1.6rem;
+  font-size: 1.6rem;
+  border: 0.1rem solid #d1d5db;
+  border-radius: 0.8rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+  background: #f9fafb;
+}
+
+.input:focus {
+  border-color: var(--primary-color);
+  background: white;
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+.inputDisabled {
+  background: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.helperText {
+  font-size: 1.3rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* 제출 버튼 */
+.submitButton {
+  width: 100%;
+  padding: 1.6rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: white;
+  background: var(--primary-color);
+  border: none;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 0.8rem;
+}
+
+.submitButton:hover {
+  background: #2563eb;
+}
+
+.submitButton:active {
+  background: #1d4ed8;
+}
+
+/* Mobile */
+@media (max-width: 743px) {
+  .card {
+    padding: 2.4rem 1.6rem;
+  }
+
+  .cardTitle {
+    font-size: 1.8rem;
+  }
+
+  .cardDescription {
+    font-size: 1.3rem;
+  }
+
+  .form {
+    gap: 2rem;
+  }
+
+  .imageWrapper {
+    width: 8rem;
+    height: 8rem;
+  }
+
+  .label {
+    font-size: 1.4rem;
+  }
+
+  .input {
+    padding: 1.2rem 1.4rem;
+    font-size: 1.5rem;
+  }
+
+  .submitButton {
+    padding: 1.4rem;
+    font-size: 1.5rem;
+  }
+}

@@ -1,0 +1,173 @@
+.userMenuContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.userMenuTrigger {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.8rem;
+  transition: background-color 0.2s ease;
+}
+
+.userMenuTrigger:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* 프로필 이미지/아바타 */
+.userAvatar {
+  position: relative;
+  width: 4rem;
+  height: 4rem;
+  min-width: 4rem;
+  min-height: 4rem;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatarImage {
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.avatarInitial {
+  color: white;
+  font-size: 1.6rem;
+  font-weight: 700;
+  user-select: none;
+}
+
+/* 사용자 이름 */
+.userName {
+  font-size: 1.6rem;
+  color: #4b5563;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 10rem;
+  flex-shrink: 0;
+}
+
+/* Chevron 아이콘 */
+.chevron {
+  color: #9ca3af;
+  transition: all 0.2s ease;
+  opacity: 0;
+  transform: translateY(-2px);
+}
+
+.chevronVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chevronRotated {
+  transform: rotate(180deg);
+}
+
+/* 드롭다운 메뉴 */
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 0.8rem);
+  right: 0;
+  min-width: 20rem;
+  background-color: white;
+  border: 0.1rem solid #e5e7eb;
+  border-radius: 0.8rem;
+  box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
+  padding: 0.8rem 0;
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-0.8rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 메뉴 아이템 */
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  width: 100%;
+  padding: 1.2rem 1.6rem;
+  font-size: 1.5rem;
+  color: #374151;
+  text-decoration: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: left;
+  font-family: inherit;
+}
+
+.menuItem:hover {
+  background-color: #f3f4f6;
+}
+
+.menuItemDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.menuIcon {
+  width: 2rem;
+  height: 2rem;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+/* Tablet 사이즈 */
+@media (max-width: 1199px) and (min-width: 744px) {
+  .userName {
+    font-size: 1.6rem;
+  }
+}
+
+/* Mobile 사이즈 */
+@media (max-width: 743px) {
+  .userName {
+    display: none;
+  }
+
+  .userMenuTrigger {
+    padding: 0.4rem;
+  }
+
+  .chevron {
+    display: none;
+  }
+
+  .dropdownMenu {
+    right: -1.6rem;
+    min-width: 18rem;
+  }
+
+  .menuItem {
+    padding: 1rem 1.2rem;
+    font-size: 1.4rem;
+  }
+
+  .menuIcon {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+}
