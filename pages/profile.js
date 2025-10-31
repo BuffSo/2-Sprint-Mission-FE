@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthProvider';
 import ProfileInfo from '@/components/Profile/ProfileInfo';
-import PasswordChange from '@/components/Profile/PasswordChange';
+import PasswordManager from '@/components/Profile/PasswordManager';
 import styles from '@/styles/Profile.module.css';
 
 export default function ProfilePage() {
@@ -15,7 +15,7 @@ export default function ProfilePage() {
       <h1 className={styles.pageTitle}>프로필 설정</h1>
       <div className={styles.cardsWrapper}>
         <ProfileInfo user={user} />
-        <PasswordChange />
+        <PasswordManager />
       </div>
     </div>
   );
