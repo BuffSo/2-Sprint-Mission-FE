@@ -6,7 +6,6 @@ import styles from './PasswordManager.module.css';
 export default function PasswordManager() {
   const { user } = useAuth();
   const [step, setStep] = useState(1); // 1: 인증코드 발송, 2: 비밀번호 입력
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
@@ -41,11 +40,6 @@ export default function PasswordManager() {
   const validate = () => {
     const newErrors = {};
 
-    // 비밀번호 변경인 경우 현재 비밀번호 필수
-    if (!isPasswordSetup && !currentPassword) {
-      newErrors.currentPassword = '현재 비밀번호를 입력하세요';
-    }
-
     if (!newPassword) {
       newErrors.newPassword = '새 비밀번호를 입력하세요';
     } else if (newPassword.length < 8) {
@@ -79,15 +73,14 @@ export default function PasswordManager() {
     setIsLoading(true);
     setErrors({});
 
-    try {
-      const data = {
-        newPassword,
-        verificationCode,
-        ...((!isPasswordSetup && { currentPassword })),
-      };
+    const data = {
+      newPassword,
+      verificationCode,
+    };
 
-      await changePassword(data);
+    const result = await changePassword(data);
 
+    if (result.success) {
       alert(
         isPasswordSetup
           ? '비밀번호가 설정되었습니다. 다시 로그인해주세요.'
@@ -96,24 +89,23 @@ export default function PasswordManager() {
 
       // 폼 초기화
       setStep(1);
-      setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       setVerificationCode('');
       setCodeSent(false);
-    } catch (error) {
-      console.error('비밀번호 변경 실패:', error);
-      const message = error.response?.data?.message || '비밀번호 변경에 실패했습니다.';
-      setErrors({ general: message });
-    } finally {
-      setIsLoading(false);
+    } else {
+      // 에러 처리 - throw 없이 상태로만 관리
+      console.error('비밀번호 변경 실패:', result.error);
+      setErrors({ general: result.error });
+      alert(`오류: ${result.error}`);
     }
+
+    setIsLoading(false);
   };
 
   // 뒤로가기 핸들러
   const handleBack = () => {
     setStep(1);
-    setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
     setVerificationCode('');
@@ -193,25 +185,6 @@ export default function PasswordManager() {
               이메일로 발송된 6자리 인증 코드를 입력하세요 (유효시간: 10분)
             </p>
           </div>
-
-          {/* 현재 비밀번호 (변경 시에만) */}
-          {!isPasswordSetup && (
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                현재 비밀번호 <span className={styles.required}>*</span>
-              </label>
-              <input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="현재 비밀번호"
-                className={`${styles.input} ${errors.currentPassword ? styles.inputError : ''}`}
-              />
-              {errors.currentPassword && (
-                <p className={styles.errorText}>{errors.currentPassword}</p>
-              )}
-            </div>
-          )}
 
           {/* 새 비밀번호 */}
           <div className={styles.formGroup}>
